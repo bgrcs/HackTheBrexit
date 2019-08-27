@@ -185,6 +185,7 @@ def text_display(source):
 
 def news_reader():
     global article_number
+    global news
 
     news = Canvas(canvas, width=975, height=585)
     news.create_image(500, 295, image=news_reader_background)
@@ -214,11 +215,10 @@ def news_reader():
             article_number = article_number + 1
 
     for button_number in range(12):
-        print(button_number)
-        button[button_number].configure(command= lambda button_number=button_number: news_try(button_number))
+        button[button_number].configure(command=lambda button_number=button_number: news_try(button_number))
 
     news_home_button = Button(app.tk, text="Home", image=news_home, highlightthickness=0, bd=0,
-                              command=check_current_key, height=49, width=165,
+                              command=lambda: check_tutorial(2), height=49, width=165,
                               activebackground="#f54242").place(x=109, y=270)  # Creates a Home button.
 
     news_favourites_button = Button(app.tk, text="Favourites", image=news_favourites, highlightthickness=0, bd=0,
@@ -231,8 +231,9 @@ def news_reader():
 
 
 def news_try(button_order):
-    if button_order == 0:
-        print("meep")
+    article_reader = Canvas(canvas, width=750, height=550)
+    article_reader.create_image(500, 295, image=full_articles[button_order])
+    article_reader.place(x=290, y=82)
 
     # There's an easier solution, but we have to find the articles first.
 
@@ -260,6 +261,28 @@ def skip_game_tutorial(button_id_1):
         destroy_current_window()
         canvas.delete(side_tutorial)
         countdown(540)
+        news_reader()
+
+
+def open_home_windows(button_id_1):
+    if button_id_1 == 1:
+        destroy_current_window()
+        canvas.delete(side_tutorial)
+        open_validation()
+
+    elif button_id_1 == 2:
+        destroy_current_window()
+        canvas.delete(side_tutorial)
+        news_reader()
+
+    elif button_id_1 == 3:
+        destroy_current_window()
+        canvas.delete(side_tutorial)
+        boris_laptop()
+
+    elif button_id_1 == 4:
+        destroy_current_window()
+        canvas.delete(side_tutorial)
         news_reader()
 
 
@@ -316,7 +339,7 @@ def check_tutorial(button_id):
             if ".!canvas.!canvas" in str(widget2):
                 widget2.destroy()
                 destroy_current_window()
-                skip_game_tutorial(button_id)
+                open_home_windows(button_id)
 
 
 def open_validation():
@@ -375,6 +398,8 @@ boris_laptop_background = PhotoImage(file="resources/boris_laptop.png")
 correct_image = PhotoImage(file="resources/correct_image.png")
 warning_button = PhotoImage(file="resources/warning_button.png")
 game_over_screen = PhotoImage(file="resources/game_over.png")
+
+# Article Files --------------------------------------------------------------------------------------------------------
 anchor_article = PhotoImage(file="resources/anchor.png")
 confidence_article = PhotoImage(file="resources/confidence.png")
 deliver_article = PhotoImage(file="resources/deliver.png")
@@ -388,8 +413,25 @@ pie_article = PhotoImage(file="resources/pie.png")
 touch_article = PhotoImage(file="resources/touch.png")
 traffic_article = PhotoImage(file="resources/traffic.png")
 
+anchor_full = PhotoImage(file="resources/anchor_full.png")
+confidence_full = PhotoImage(file="resources/confidence_full.png")
+deliver_full = PhotoImage(file="resources/deliver_full.png")
+farmers_full = PhotoImage(file="resources/farmers_full.png")
+fuel_full = PhotoImage(file="resources/fuel_full.png")
+irish_full = PhotoImage(file="resources/irish_full.png")
+letter_full = PhotoImage(file="resources/letter_full.png")
+macron_full = PhotoImage(file="resources/macron_full.png")
+movement_full = PhotoImage(file="resources/movement_full.png")
+pie_full = PhotoImage(file="resources/pie_full.png")
+touch_full = PhotoImage(file="resources/touch_full.png")
+traffic_full = PhotoImage(file="resources/traffic_full.png")
+
+
 articles = [anchor_article, confidence_article, deliver_article, farmers_article, fuel_article, irish_article,
             letter_article, macron_article, movement_article, pie_article, touch_article, traffic_article]
+
+full_articles = [anchor_full, confidence_full, deliver_full, farmers_full, fuel_full, irish_full, letter_full,
+                 macron_full, movement_full, pie_full, touch_full, traffic_full]
 
 # ----------------------------------------------------------------------------------------------------------------------
 
