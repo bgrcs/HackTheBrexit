@@ -142,6 +142,7 @@ def countdown(count):
     if count == 0:
         destroy_current_window()
         destroy_widgets()
+        # TODO: Prevent the news articles from remaining on top of the Game Over screen.
         canvas.create_image(550, 325, image=game_over_screen)
 
 
@@ -495,3 +496,69 @@ exit_button = Button(text="Exit", image=exit_image, highlightthickness=0, bd=0, 
                      height=110, width=150, activebackground="#d61900").place(x=640, y=177)  # Creates a quit button.
 
 app.display()  # This initiates the wrapped Tkinter window.
+
+'''' --------------------------------- USELESS CODE --------------------------------------------------------------------
+
+with open("test.txt", "a") as myfile:
+    myfile.write("appended text") ----> Append text to file.
+    
+-------------------------------------------------------------------------------
+
+class DragManager():
+    def add_dragable(self, widget):
+        widget.bind("<ButtonPress-1>", self.on_start)
+        widget.bind("<B1-Motion>", self.on_drag)
+        widget.bind("<ButtonRelease-1>", self.on_drop)
+        widget.configure(cursor="hand1")
+
+    def on_start(self, event):
+        # you could use this method to create a floating window
+        # that represents what is being dragged.
+        pass
+
+    def on_drag(self, event):
+        # you could use this method to move a floating window that
+        # represents what you're dragging
+        pass
+
+    def on_drop(self, event):
+        # find the widget under the cursor
+        x,y = event.widget.winfo_pointerxy()
+        target = event.widget.winfo_containing(x,y)
+        try:
+            target.configure(image=event.widget.cget("image"))
+        except:
+            pass
+
+--------------> Create a canvas which utilizes the drag and drop, and do something when the user puts mouse above.
+
+def main():
+    f= open("guru99.txt","w+")
+    #f=open("guru99.txt","a+")
+    for i in range(10):
+         f.write("This is line %d\r\n" % (i+1))
+    f.close()
+    #Open the file back and read the contents
+    #f=open("guru99.txt", "r")
+    #if f.mode == 'r':
+    #   contents =f.read()
+    #    print (contents)
+    #or, readlines reads the individual line into a list
+    #fl =f.readlines()
+    #for x in fl:
+    #print(x)
+if __name__== "__main__":
+  main()
+  
+--------------------------------------------------
+file = open(“testfile.txt”,”w”) 
+ 
+file.write(“Why? Because we can.”) 
+ 
+file.close() 
+
+--------------------------------------------------
+f = open("demofile.txt", "r")
+print(f.read(5))
+    
+'''
