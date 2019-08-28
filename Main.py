@@ -36,6 +36,11 @@ def home_screen(user_id):
 
     if user_id == 1:
         print("doggo")
+        # TODO: Create / update "last login" in the game save file. ("data/doggo.txt").
+        # TODO: Create a "keys found" section, with each key found in the articles + overall amount.
+        # TODO: Create and edit a global variable for the amount of keys found.
+        # TODO: (OPTIONAL) Make an array of the keys which have been loaded from game save file.
+
     elif user_id == 2:
         print("cat")
     elif user_id == 3:
@@ -69,6 +74,8 @@ def home_screen(user_id):
     label = Label(app.tk)
     label.configure(text="09:00", background="black", foreground="white", font=("Courier", 14))
     label.place(x=10, y=3)
+
+    # TODO: There should be an option to restart the game and to exit the game to main menu from the top bar.
 
 
 def loading_screen():
@@ -125,6 +132,9 @@ def destroy_widgets():
 
 def countdown(count):
     label['text'] = str(datetime.timedelta(seconds=count))[2:]
+
+    # TODO: If there are 2 keys left, decrease the countdown by one minute.
+    # TODO: Give the user a warning if the "authorities" are about to approach
 
     if count > 0:
         app.tk.after(1000, countdown, count - 1)
@@ -215,7 +225,7 @@ def news_reader():
             article_number = article_number + 1
 
     for button_number in range(12):
-        button[button_number].configure(command=lambda button_number=button_number: news_try(button_number))
+        button[button_number].configure(command=lambda button_number=button_number: open_article(button_number))
 
     news_home_button = Button(app.tk, text="Home", image=news_home, highlightthickness=0, bd=0,
                               command=lambda: check_tutorial(2), height=49, width=165,
@@ -225,17 +235,36 @@ def news_reader():
                                     command=check_current_key, height=49, width=165,
                                     activebackground="#f54242").place(x=109, y=350)  # Creates a Favourites button.
 
+    # TODO: Create a favourites window within news reader canvas.
+    # TODO: Add a news "favourite" button to the full article page when article card is clicked.
+
     news_help_button = Button(app.tk, text="Help", image=news_help, highlightthickness=0, bd=0,
                               command=check_current_key, height=49, width=165,
                               activebackground="#f54242").place(x=109, y=429)  # Creates a Help button.
 
+    # TODO: Create a help window within news reader canvas. The help window should explain how to find keys.
 
-def news_try(button_order):
-    article_reader = Canvas(canvas, width=750, height=550)
-    article_reader.create_image(500, 295, image=full_articles[button_order])
-    article_reader.place(x=290, y=82)
 
-    # There's an easier solution, but we have to find the articles first.
+def open_article(button_order):
+    # TODO: Please fix the positioning of the articles.
+
+    article_reader = Canvas(canvas, width=750, height=550, background="#ffffff")  # Set article canvas background.
+    article_reader.create_image(390, 275, image=full_articles[button_order])  # Center article image within canvas.
+    article_reader.place(x=290, y=82)  # Place article canvas within news reader.
+
+    # TODO: Create a random invisible button within the article canvas.
+    # TODO: If invisible button is clicked, the user should get a "new key" notification.
+    # TODO: Place "copy" button to notification. If the user clicks the copy button, the key is added to clipboard.
+    # TODO: There should be an exit button if the user decides not to copy the key (key has already been found).
+    # TODO: Still show the close button even if the key hasn't been found before.
+    # TODO: If the same key has been found, and the user is trying to copy it again, show the warning notification.
+    # TODO: Create copy and cancel buttons for the warning photo (Don't create a canvas).
+
+    # TODO: Remove scrollbar from the side (IMPORTANT). -> Remove RHS canvas from main news reader?
+
+
+def create_notification():
+     canvas.create_image(297, 91, image=key_notification)
 
 
 def skip_game_tutorial(button_id_1):
@@ -262,6 +291,8 @@ def skip_game_tutorial(button_id_1):
         canvas.delete(side_tutorial)
         countdown(540)
         news_reader()
+
+    # TODO: (Optional) Create a dictionary instead of single IF statements?
 
 
 def open_home_windows(button_id_1):
@@ -295,9 +326,23 @@ def boris_laptop():
     count_boris.configure(text="YOU MUST FIND ALL KEYS", background="black", foreground="white", font=("Courier", 14))
     count_boris.place(x=10, y=3)
 
+    # TODO: When opened, check in the game save file if all 7 keys have been found.
+    # TODO: Display in a label how many keys have been found.
+    # TODO: Once the seven keys have been found, display the "Cancel Brexit" button.
+
 
 def proceed_tutorial():
     print("Proceed")
+
+    canvas.create_image(788, 29, image=second_tutorial, anchor=NW)
+
+    # TODO: When button clicked, display the second part of the tutorial.
+    # TODO: When second part displayed, also position the "finish tutorial" button.
+    # TODO: When the "finish tutorial" button is clicked, start the timer and open the news reader
+
+    proceed_button = Button(text="Proceed", image=finish_tutorial_button, highlightthickness=0, bd=0,
+                            command=lambda: check_tutorial(4), height=46, width=146,
+                            activebackground="#00d639").place(x=948, y=490)
 
 
 def cancel_skip():
@@ -398,6 +443,9 @@ boris_laptop_background = PhotoImage(file="resources/boris_laptop.png")
 correct_image = PhotoImage(file="resources/correct_image.png")
 warning_button = PhotoImage(file="resources/warning_button.png")
 game_over_screen = PhotoImage(file="resources/game_over.png")
+second_tutorial = PhotoImage(file="resources/second_tutorial.png")
+key_notification = PhotoImage(file="resources/key_notification.png")
+finish_tutorial_button = PhotoImage(file="resources/finish_tutorial.png")
 
 # Article Files --------------------------------------------------------------------------------------------------------
 anchor_article = PhotoImage(file="resources/anchor.png")
@@ -425,7 +473,6 @@ movement_full = PhotoImage(file="resources/movement_full.png")
 pie_full = PhotoImage(file="resources/pie_full.png")
 touch_full = PhotoImage(file="resources/touch_full.png")
 traffic_full = PhotoImage(file="resources/traffic_full.png")
-
 
 articles = [anchor_article, confidence_article, deliver_article, farmers_article, fuel_article, irish_article,
             letter_article, macron_article, movement_article, pie_article, touch_article, traffic_article]
