@@ -1,10 +1,10 @@
-import datetime
 import PIL
 from PIL import *  # Imports the pillow library to load images into a Canvas.
 from guizero import *  # Import the guizero library.
 from tkinter import *  # Imports the tkinter library for the canvas.
 import time  # Crucial for the terminal window.
-import datetime
+import datetime  # Datetime allows me to convert the seconds from the timer into minutes and seconds.
+from random import randrange  # This allows me to create a canvas on a specific part of the screen
 
 app = App("Hack The Brexit", height=650, width=1100)  # Create the app window, title, with height and width.
 
@@ -12,7 +12,7 @@ app = App("Hack The Brexit", height=650, width=1100)  # Create the app window, t
 
 global system_widgets
 
-system_widgets = [".!canvas", ".!button6", ".!button7", ".!button8", ".!label"]
+system_widgets = [".!canvas", ".!button6", ".!button7", ".!button8", "!button9", ".!label"]
 
 global data
 
@@ -40,6 +40,14 @@ def home_screen(user_id):
         # TODO: Create a "keys found" section, with each key found in the articles + overall amount.
         # TODO: Create and edit a global variable for the amount of keys found.
         # TODO: (OPTIONAL) Make an array of the keys which have been loaded from game save file.
+
+        with open("data/doggo.txt", "a+") as doggo_save:
+            data = doggo_save.readline(1)
+            if not data:
+                doggo_save.write("------------USER DATA------------")
+                # TODO: Write initial number of keys
+                # TODO: Write "latest amount of time left" (Not constantly updated)
+                # TODO: The save game button should write the amount of time left in the text file.
 
     elif user_id == 2:
         print("cat")
@@ -71,9 +79,16 @@ def home_screen(user_id):
                          command=lambda: check_tutorial(4), height=46, width=146,
                          activebackground="#f54242").place(x=797, y=490)  # Ignore the game tutorial.
 
+    dropdown_button = Button(app.tk, text="Dropdown", image=menu_dropdown, highlightthickness=0, bd=0,
+                                    command=drop_view, height=49, width=165,
+                                    activebackground="#f54242").place(x=829, y=50)  # Creates a Favourites button.
+
     label = Label(app.tk)
     label.configure(text="09:00", background="black", foreground="white", font=("Courier", 14))
     label.place(x=10, y=3)
+
+    # TODO: That line will mess up the whole open close window system, fix it.
+    # TODO: Add the options menu to the menu array.
 
     # TODO: There should be an option to restart the game and to exit the game to main menu from the top bar.
 
@@ -91,6 +106,8 @@ def loading_screen():
     loading.show()  # Shows the new loading screen.
 
     # The following code simulates a Linux Boot Splash screen in silent mode.
+
+    # TODO: (Optional) Find a way to decode keys without stopping the boot menu.
 
     with open('resources/boot_sequence.txt', 'r') as boot_file:
         lines = [line.rstrip('\n') for line in boot_file.readlines()]
@@ -144,6 +161,10 @@ def countdown(count):
         destroy_widgets()
         # TODO: Prevent the news articles from remaining on top of the Game Over screen.
         canvas.create_image(550, 325, image=game_over_screen)
+
+
+def drop_view():
+    canvas.create_image(689, 233, image=game_options)
 
 
 def login_screen():
@@ -265,7 +286,7 @@ def open_article(button_order):
 
 
 def create_notification():
-     canvas.create_image(297, 91, image=key_notification)
+    canvas.create_image(297, 91, image=key_notification)
 
 
 def skip_game_tutorial(button_id_1):
@@ -447,6 +468,8 @@ game_over_screen = PhotoImage(file="resources/game_over.png")
 second_tutorial = PhotoImage(file="resources/second_tutorial.png")
 key_notification = PhotoImage(file="resources/key_notification.png")
 finish_tutorial_button = PhotoImage(file="resources/finish_tutorial.png")
+game_options = PhotoImage(file="resources/game_options.png")
+menu_dropdown = PhotoImage(file="resources/notification_button.png")
 
 # Article Files --------------------------------------------------------------------------------------------------------
 anchor_article = PhotoImage(file="resources/anchor.png")
@@ -560,5 +583,7 @@ file.close()
 --------------------------------------------------
 f = open("demofile.txt", "r")
 print(f.read(5))
+
+self.Box.attributes("-alpha", .30) -------> Create transparent Canvas.
     
 '''
