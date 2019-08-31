@@ -1,5 +1,6 @@
 import PIL
 from PIL import *  # Imports the pillow library to load images into a Canvas.
+from PIL import ImageTk
 from guizero import *  # Import the guizero library.
 from tkinter import *  # Imports the tkinter library for the canvas.
 import time  # Crucial for the terminal window.
@@ -12,7 +13,7 @@ app = App("Hack The Brexit", height=650, width=1100)  # Create the app window, t
 
 global system_widgets
 
-system_widgets = [".!canvas", ".!button6", ".!button7", ".!button8", "!button9", ".!label"]
+system_widgets = [".!canvas", ".!button6", ".!button7", ".!button8", ".!button9", ".!label"]
 
 global data
 
@@ -21,6 +22,10 @@ data = []
 global articles
 
 articles = []
+
+global transparent_rectangles
+
+transparent_rectangles = []
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -71,6 +76,10 @@ def home_screen(user_id):
                            command=lambda: check_tutorial(3), height=46, width=46,
                            activebackground="#ffffff").place(x=8, y=380)  # Creates laptop access button.
 
+    dropdown_button = Button(app.tk, text="Dropdown", image=menu_dropdown, highlightthickness=0, bd=0,
+                             command=drop_view, height=34, width=143,
+                             activebackground="#f54242").place(x=956, y=0)  # Creates a Favourites button.
+
     proceed_button = Button(text="Proceed", image=proceed_button_image, highlightthickness=0, bd=0,
                             command=proceed_tutorial, height=46, width=146,
                             activebackground="#00d639").place(x=948, y=490)  # Continues the game tutorial.
@@ -79,16 +88,9 @@ def home_screen(user_id):
                          command=lambda: check_tutorial(4), height=46, width=146,
                          activebackground="#f54242").place(x=797, y=490)  # Ignore the game tutorial.
 
-    dropdown_button = Button(app.tk, text="Dropdown", image=menu_dropdown, highlightthickness=0, bd=0,
-                                    command=drop_view, height=49, width=165,
-                                    activebackground="#f54242").place(x=829, y=50)  # Creates a Favourites button.
-
     label = Label(app.tk)
     label.configure(text="09:00", background="black", foreground="white", font=("Courier", 14))
     label.place(x=10, y=3)
-
-    # TODO: That line will mess up the whole open close window system, fix it.
-    # TODO: Add the options menu to the menu array.
 
     # TODO: There should be an option to restart the game and to exit the game to main menu from the top bar.
 
@@ -106,8 +108,6 @@ def loading_screen():
     loading.show()  # Shows the new loading screen.
 
     # The following code simulates a Linux Boot Splash screen in silent mode.
-
-    # TODO: (Optional) Find a way to decode keys without stopping the boot menu.
 
     with open('resources/boot_sequence.txt', 'r') as boot_file:
         lines = [line.rstrip('\n') for line in boot_file.readlines()]
@@ -164,7 +164,7 @@ def countdown(count):
 
 
 def drop_view():
-    canvas.create_image(689, 233, image=game_options)
+    canvas.create_image(949, 149, image=game_options)
 
 
 def login_screen():
@@ -261,18 +261,56 @@ def news_reader():
     # TODO: Add a news "favourite" button to the full article page when article card is clicked.
 
     news_help_button = Button(app.tk, text="Help", image=news_help, highlightthickness=0, bd=0,
-                              command=check_current_key, height=49, width=165,
+                              command=open_help, height=49, width=165,
                               activebackground="#f54242").place(x=109, y=429)  # Creates a Help button.
 
-    # TODO: Create a help window within news reader canvas. The help window should explain how to find keys.
+
+def open_help():
+    help_page = Canvas(canvas, width=750, height=550, background="#ffffff")
+    help_page.create_image(390, 275, image=news_help_page)
+    help_page.place(x=290, y=82)
 
 
 def open_article(button_order):
-    # TODO: Please fix the positioning of the articles.
+    global article_reader
 
     article_reader = Canvas(canvas, width=750, height=550, background="#ffffff")  # Set article canvas background.
     article_reader.create_image(390, 275, image=full_articles[button_order])  # Center article image within canvas.
     article_reader.place(x=290, y=82)  # Place article canvas within news reader.
+
+    if button_order == 0:
+        anchor_btn = Button(app.tk, text="Anchor", image=anchor_button, highlightthickness=0, bd=0,
+                            command=create_notification, height=39, width=135, background="#ffffff",
+                            activebackground="#ffffff").place(x=836, y=100)  # Creates an anchor button.
+
+    if button_order == 2:
+        deliver_btn = Button(app.tk, text="Deliver", image=deliver_button, highlightthickness=0, bd=0,
+                             command=create_notification, height=30, width=80, background="#ffffff",
+                             activebackground="#ffffff").place(x=454, y=206)  # Creates a deliver button.
+
+    if button_order == 3:
+        farmers_btn = Button(app.tk, text="Farmers", image=farmers_button, highlightthickness=0, bd=0,
+                             command=create_notification, height=30, width=80, background="#ffffff",
+                             activebackground="#ffffff").place(x=454, y=206)  # Creates an impact button.
+    if button_order == 7:
+        macron_btn = Button(app.tk, text="Macron", image=macron_button, highlightthickness=0, bd=0,
+                            command=create_notification, height=30, width=80, background="#ffffff",
+                            activebackground="#ffffff").place(x=454, y=206)  # Creates a Macron button.
+
+    if button_order == 9:
+        pie_btb = Button(app.tk, text="Pie", image=pie_button, highlightthickness=0, bd=0,
+                         command=create_notification, height=30, width=80, background="#ffffff",
+                         activebackground="#ffffff").place(x=454, y=206)  # Creates a Macron button.
+
+    if button_order == 10:
+        touch_btn = Button(app.tk, text="Pie", image=touch_button, highlightthickness=0, bd=0,
+                           command=create_notification, height=30, width=80, background="#ffffff",
+                           activebackground="#ffffff").place(x=454, y=206)  # Creates a Macron button.
+
+    if button_order == 11:
+        traffic_btn = Button(app.tk, text="Pie", image=traffic_button, highlightthickness=0, bd=0,
+                             command=create_notification, height=30, width=80, background="#ffffff",
+                             activebackground="#ffffff").place(x=454, y=206)  # Creates a Macron button.
 
     # TODO: Create a random invisible button within the article canvas.
     # TODO: If invisible button is clicked, the user should get a "new key" notification.
@@ -286,7 +324,7 @@ def open_article(button_order):
 
 
 def create_notification():
-    canvas.create_image(297, 91, image=key_notification)
+    canvas.create_image(897, 19, image=key_notification)
 
 
 def skip_game_tutorial(button_id_1):
@@ -358,7 +396,6 @@ def proceed_tutorial():
 
     canvas.create_image(788, 29, image=second_tutorial, anchor=NW)
 
-    # TODO: When button clicked, display the second part of the tutorial.
     # TODO: When second part displayed, also position the "finish tutorial" button.
     # TODO: When the "finish tutorial" button is clicked, start the timer and open the news reader
 
@@ -384,7 +421,7 @@ def check_tutorial(button_id):
     for widget in app.tk.winfo_children():
         widgets.append(str(widget))
 
-    if ".!button9" in widgets:  # Tutorial is active
+    if ".!button10" in widgets:  # Tutorial is active
         warning = Canvas(canvas, width=615, height=505)
         warning_image = warning.create_image(315, 255, image=warning_tutorial)
         warning.place(x=125, y=67)
@@ -397,7 +434,7 @@ def check_tutorial(button_id):
                                 command=cancel_skip, height=49, width=170,
                                 activebackground="#f54242").place(x=440, y=492)  # Creates a validation button.
 
-    elif ".!button9" not in widgets:  # Tutorial is not active
+    elif ".!button10" not in widgets:  # Tutorial is not active
         for widget2 in canvas.winfo_children():
 
             if ".!canvas.!frame" in str(widget2):
@@ -435,7 +472,6 @@ def check_current_key():
 
 # ----------------------------------------------------------------------------------------------------------------------
 
-
 # Resources ------------------------------------------------------------------------------------------------------------
 
 background_image = PhotoImage(file="resources/menu_background.png")
@@ -470,6 +506,7 @@ key_notification = PhotoImage(file="resources/key_notification.png")
 finish_tutorial_button = PhotoImage(file="resources/finish_tutorial.png")
 game_options = PhotoImage(file="resources/game_options.png")
 menu_dropdown = PhotoImage(file="resources/notification_button.png")
+news_help_page = PhotoImage(file="resources/help_background.png")
 
 # Article Files --------------------------------------------------------------------------------------------------------
 anchor_article = PhotoImage(file="resources/anchor.png")
@@ -497,6 +534,14 @@ movement_full = PhotoImage(file="resources/movement_full.png")
 pie_full = PhotoImage(file="resources/pie_full.png")
 touch_full = PhotoImage(file="resources/touch_full.png")
 traffic_full = PhotoImage(file="resources/traffic_full.png")
+
+anchor_button = PhotoImage(file="resources/anchor_button.png")
+deliver_button = PhotoImage(file="resources/deliver_button.png")
+farmers_button = PhotoImage(file="resources/farmers_button.png")
+macron_button = PhotoImage(file="resources/macron_button.png")
+pie_button = PhotoImage(file="resources/pie_button.png")
+touch_button = PhotoImage(file="resources/touch_button.png")
+traffic_button = PhotoImage(file="resources/traffic_button.png")
 
 articles = [anchor_article, confidence_article, deliver_article, farmers_article, fuel_article, irish_article,
             letter_article, macron_article, movement_article, pie_article, touch_article, traffic_article]
@@ -526,32 +571,6 @@ with open("test.txt", "a") as myfile:
     myfile.write("appended text") ----> Append text to file.
     
 -------------------------------------------------------------------------------
-
-class DragManager():
-    def add_dragable(self, widget):
-        widget.bind("<ButtonPress-1>", self.on_start)
-        widget.bind("<B1-Motion>", self.on_drag)
-        widget.bind("<ButtonRelease-1>", self.on_drop)
-        widget.configure(cursor="hand1")
-
-    def on_start(self, event):
-        # you could use this method to create a floating window
-        # that represents what is being dragged.
-        pass
-
-    def on_drag(self, event):
-        # you could use this method to move a floating window that
-        # represents what you're dragging
-        pass
-
-    def on_drop(self, event):
-        # find the widget under the cursor
-        x,y = event.widget.winfo_pointerxy()
-        target = event.widget.winfo_containing(x,y)
-        try:
-            target.configure(image=event.widget.cget("image"))
-        except:
-            pass
 
 --------------> Create a canvas which utilizes the drag and drop, and do something when the user puts mouse above.
 
