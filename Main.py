@@ -5,27 +5,34 @@ from guizero import *  # Import the guizero library.
 from tkinter import *  # Imports the tkinter library for the canvas.
 import time  # Crucial for the terminal window.
 import datetime  # Datetime allows me to convert the seconds from the timer into minutes and seconds.
-from random import randrange  # This allows me to create a canvas on a specific part of the screen
+from random import *  # This allows me to create a canvas on a specific part of the screen
+import pyperclip
+import secrets
 
 app = App("Hack The Brexit", height=650, width=1100)  # Create the app window, title, with height and width.
 
 # Global Variables -----------------------------------------------------------------------------------------------------
 
 global system_widgets
-
 system_widgets = [".!canvas", ".!button6", ".!button7", ".!button8", ".!button9", ".!label"]
 
 global data
-
 data = []
 
-global articles
+global keys_found
+keys_found = []
 
+global articles
 articles = []
 
 global transparent_rectangles
-
 transparent_rectangles = []
+
+global totalKeys
+totalKeys = 0
+
+global articles_list
+articles_list = []
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -38,21 +45,53 @@ def home_screen(user_id):
     global proceed_button
     global skip_button
     global side_tutorial
+    global secondtutorial
 
     if user_id == 1:
-        print("doggo")
         # TODO: Create / update "last login" in the game save file. ("data/doggo.txt").
         # TODO: Create a "keys found" section, with each key found in the articles + overall amount.
         # TODO: Create and edit a global variable for the amount of keys found.
         # TODO: (OPTIONAL) Make an array of the keys which have been loaded from game save file.
 
-        with open("data/doggo.txt", "a+") as doggo_save:
-            data = doggo_save.readline(1)
-            if not data:
-                doggo_save.write("------------USER DATA------------")
-                # TODO: Write initial number of keys
-                # TODO: Write "latest amount of time left" (Not constantly updated)
-                # TODO: The save game button should write the amount of time left in the text file.
+        with open('data/doggo.txt') as doggo_text:
+            if doggo_text.read() == "":
+                with open("data/doggo.txt", "a+") as doggo_save:
+                    doggo_save.write("------------USER DATA------------")
+                    doggo_save.write("\n\nKeys Found: 0/7")
+                    doggo_save.write("\nTime Left: 9:00")
+                    doggo_save.write("\n\n------------KEYS LIST------------\n")
+                    # TODO: Write "latest amount of time left" (Not constantly updated)
+                    # TODO: The save game button should write the amount of time left in the text file.
+
+    elif user_id == 2:
+        # TODO: Create / update "last login" in the game save file. ("data/doggo.txt").
+        # TODO: Create a "keys found" section, with each key found in the articles + overall amount.
+        # TODO: Create and edit a global variable for the amount of keys found.
+        # TODO: (OPTIONAL) Make an array of the keys which have been loaded from game save file.
+
+        with open('data/cat.txt') as doggo_text:
+            if doggo_text.read() == "":
+                with open("data/cat.txt", "a+") as doggo_save:
+                    doggo_save.write("------------USER DATA------------")
+                    doggo_save.write("\n\nKeys Found: 0/7")
+                    doggo_save.write("\nTime Left: 9:00")
+                    doggo_save.write("\n\n------------KEYS LIST------------\n")
+                    # TODO: Write "latest amount of time left" (Not constantly updated)
+                    # TODO: The save game button should write the amount of time left in the text file.
+
+    elif user_id == 3:
+        # TODO: Create a "keys found" section, with each key found in the articles + overall amount.
+        # TODO: (OPTIONAL) Make an array of the keys which have been loaded from game save file.
+
+        with open('data/rabbit.txt') as doggo_text:
+            if doggo_text.read() == "":
+                with open("data/rabbit.txt", "a+") as doggo_save:
+                    doggo_save.write("------------USER DATA------------")
+                    doggo_save.write("\n\nKeys Found: 0/7")
+                    doggo_save.write("\nTime Left: 9:00")
+                    doggo_save.write("\n\n------------KEYS LIST------------\n")
+                    # TODO: Write "latest amount of time left" (Not constantly updated)
+                    # TODO: The save game button should write the amount of time left in the text file.
 
     elif user_id == 2:
         print("cat")
@@ -62,6 +101,7 @@ def home_screen(user_id):
     destroy_widgets()
 
     canvas.create_image(550, 325, image=home_background)
+    secondtutorial = canvas.create_image(788, 29, image=second_tutorial, anchor=NW)
     side_tutorial = canvas.create_image(788, 29, image=side_bar, anchor=NW)
 
     validation_button = Button(text="Validation", image=validation_icon, highlightthickness=0, bd=0,
@@ -157,14 +197,75 @@ def countdown(count):
         app.tk.after(1000, countdown, count - 1)
 
     if count == 0:
+        for widget in canvas.winfo_children():
+
+            if ".!canvas.!frame" in str(widget):
+                widget.destroy()
+
+            if ".!canvas.!canvas" in str(widget):
+                widget.destroy()
+
         destroy_current_window()
         destroy_widgets()
-        # TODO: Prevent the news articles from remaining on top of the Game Over screen.
+
         canvas.create_image(550, 325, image=game_over_screen)
 
 
 def drop_view():
-    canvas.create_image(949, 149, image=game_options)
+    for widget in canvas.winfo_children():
+
+        if ".!canvas.!frame" in str(widget):
+            widget.destroy()
+
+        if ".!canvas.!canvas" in str(widget):
+            widget.destroy()
+            destroy_current_window()
+
+    drop_canvas = Canvas(canvas, width=200, height=220)
+    drop_canvas.create_image(103, 112, image=game_options)
+    drop_canvas.place(x=890, y=40)
+
+    save_progress = Button(text="Save 1", image=save_the_game, highlightthickness=0, bd=0,
+                           command=save_game, height=33, width=150).place(x=920, y=110)
+
+    restart_game = Button(text="Save 1", image=restart_the_game, highlightthickness=0, bd=0,
+                          command=restart, height=33, width=150).place(x=920, y=160)
+
+    quit_to_menu = Button(text="Save 1", image=exit_the_game, highlightthickness=0, bd=0,
+                          command=quitmenu, height=33, width=150).place(x=920, y=210)
+
+
+def save_game():
+    print("Save Game")
+
+
+def restart():
+    loading_screen()
+
+
+def quitmenu():
+    for widget in canvas.winfo_children():
+
+        if ".!canvas.!frame" in str(widget):
+            widget.destroy()
+
+        if ".!canvas.!canvas" in str(widget):
+            widget.destroy()
+
+    destroy_current_window()
+    destroy_widgets()
+
+    canvas.create_image(550, 325, image=background_image)  # Adds the menu background to the canvas.
+
+    app.add_tk_widget(canvas)  # This adds a tweaked Tk widget to the guizero instance.
+
+    play_button = Button(text="Play", image=play_image, highlightthickness=0, bd=0, command=loading_screen,
+                         height=110, width=150, activebackground="#00d639").place(x=325,
+                                                                                  y=177)  # Creates a play button.
+
+    exit_button = Button(text="Exit", image=exit_image, highlightthickness=0, bd=0, command=quit_game,
+                         height=110, width=150, activebackground="#d61900").place(x=640,
+                                                                                  y=177)  # Creates a quit button.
 
 
 def login_screen():
@@ -251,18 +352,11 @@ def news_reader():
 
     news_home_button = Button(app.tk, text="Home", image=news_home, highlightthickness=0, bd=0,
                               command=lambda: check_tutorial(2), height=49, width=165,
-                              activebackground="#f54242").place(x=109, y=270)  # Creates a Home button.
-
-    news_favourites_button = Button(app.tk, text="Favourites", image=news_favourites, highlightthickness=0, bd=0,
-                                    command=check_current_key, height=49, width=165,
-                                    activebackground="#f54242").place(x=109, y=350)  # Creates a Favourites button.
-
-    # TODO: Create a favourites window within news reader canvas.
-    # TODO: Add a news "favourite" button to the full article page when article card is clicked.
+                              activebackground="#f54242").place(x=109, y=290)  # Creates a Home button.
 
     news_help_button = Button(app.tk, text="Help", image=news_help, highlightthickness=0, bd=0,
                               command=open_help, height=49, width=165,
-                              activebackground="#f54242").place(x=109, y=429)  # Creates a Help button.
+                              activebackground="#f54242").place(x=109, y=369)  # Creates a Help button.
 
 
 def open_help():
@@ -280,136 +374,193 @@ def open_article(button_order):
 
     if button_order == 0:
         anchor_btn = Button(app.tk, text="Anchor", image=anchor_button, highlightthickness=0, bd=0,
-                            command=create_notification, height=39, width=135, background="#ffffff",
+                            command=lambda: create_notification(0), cursor="hand1", height=39, width=135,
+                            background="#ffffff",
                             activebackground="#ffffff").place(x=836, y=100)  # Creates an anchor button.
 
     if button_order == 2:
         deliver_btn = Button(app.tk, text="Deliver", image=deliver_button, highlightthickness=0, bd=0,
-                             command=create_notification, height=30, width=80, background="#ffffff",
+                             command=lambda: create_notification(2), height=30, width=80, background="#ffffff",
+                             cursor="hand1",
                              activebackground="#ffffff").place(x=454, y=206)  # Creates a deliver button.
 
     if button_order == 3:
         farmers_btn = Button(app.tk, text="Farmers", image=farmers_button, highlightthickness=0, bd=0,
-                             command=create_notification, height=30, width=80, background="#ffffff",
-                             activebackground="#ffffff").place(x=454, y=206)  # Creates an impact button.
+                             command=lambda: create_notification(3), height=30, width=48, background="#ffffff",
+                             cursor="hand1",
+                             activebackground="#ffffff").place(x=624, y=577)  # Creates an impact button.
+
     if button_order == 7:
         macron_btn = Button(app.tk, text="Macron", image=macron_button, highlightthickness=0, bd=0,
-                            command=create_notification, height=30, width=80, background="#ffffff",
-                            activebackground="#ffffff").place(x=454, y=206)  # Creates a Macron button.
+                            command=lambda: create_notification(7), height=20, width=40, background="#ffffff",
+                            cursor="hand1",
+                            activebackground="#ffffff").place(x=784, y=536)  # Creates a Macron button.
 
     if button_order == 9:
-        pie_btb = Button(app.tk, text="Pie", image=pie_button, highlightthickness=0, bd=0,
-                         command=create_notification, height=30, width=80, background="#ffffff",
-                         activebackground="#ffffff").place(x=454, y=206)  # Creates a Macron button.
+        pie_btn = Button(app.tk, text="Pie", image=pie_button, highlightthickness=0, bd=0,
+                         command=lambda: create_notification(9), height=20, width=40, background="#ffffff",
+                         cursor="hand1",
+                         activebackground="#ffffff").place(x=883, y=428)  # Creates a Macron button.
 
     if button_order == 10:
         touch_btn = Button(app.tk, text="Pie", image=touch_button, highlightthickness=0, bd=0,
-                           command=create_notification, height=30, width=80, background="#ffffff",
-                           activebackground="#ffffff").place(x=454, y=206)  # Creates a Macron button.
+                           command=lambda: create_notification(10), height=30, width=20, background="#ffffff",
+                           cursor="hand1",
+                           activebackground="#ffffff").place(x=491, y=453)  # Creates a Macron button.
 
     if button_order == 11:
         traffic_btn = Button(app.tk, text="Pie", image=traffic_button, highlightthickness=0, bd=0,
-                             command=create_notification, height=30, width=80, background="#ffffff",
-                             activebackground="#ffffff").place(x=454, y=206)  # Creates a Macron button.
-
-    # TODO: Create a random invisible button within the article canvas.
-    # TODO: If invisible button is clicked, the user should get a "new key" notification.
-    # TODO: Place "copy" button to notification. If the user clicks the copy button, the key is added to clipboard.
-    # TODO: There should be an exit button if the user decides not to copy the key (key has already been found).
-    # TODO: Still show the close button even if the key hasn't been found before.
-    # TODO: If the same key has been found, and the user is trying to copy it again, show the warning notification.
-    # TODO: Create copy and cancel buttons for the warning photo (Don't create a canvas).
-
-    # TODO: Remove scrollbar from the side (IMPORTANT). -> Remove RHS canvas from main news reader?
+                             command=lambda: create_notification(11), height=30, width=30, background="#ffffff",
+                             cursor="hand1",
+                             activebackground="#ffffff").place(x=697, y=492)  # Creates a Macron button.
 
 
-def create_notification():
-    canvas.create_image(897, 19, image=key_notification)
+def create_notification(article_number):
+    notify_canvas = Canvas(canvas, width=300, height=55, background="#ffffff")  # Set article canvas background.
+    notify_canvas.create_image(152, 30, image=key_notification)  # Center article image within canvas.
+    notify_canvas.place(x=790, y=38)  # Place article canvas within news reader.
+
+    copy_key = Button(app.tk, text="Validation", image=copy_button, highlightthickness=0, bd=0,
+                      command=lambda: add_to_clipboard(article_number), height=22, width=57,
+                      activebackground="#f54242").place(x=1015, y=55)  # Creates a validation button.
+
+
+def add_to_clipboard(article_number):
+    print(articles_list)
+
+    if article_number in articles_list:
+        same_key = Canvas(canvas, width=440, height=300, background="#ffffff")  # Set article canvas background.
+        same_key.create_image(222, 180, image=key_warning)  # Center article image within canvas.
+        same_key.place(x=450, y=148)  # Place article canvas within news reader.
+
+    elif article_number not in articles_list:
+        articles_list.append(article_number)
+        pyperclip.copy(secrets.choice(data))
+
+
+def finish_tutorial():
+    destroy_current_window()
+    canvas.delete(side_tutorial)
+    canvas.delete(secondtutorial)
+    countdown(540)
+    news_reader()
 
 
 def skip_game_tutorial(button_id_1):
     if button_id_1 == 1:
         destroy_current_window()
+        canvas.delete(secondtutorial)
         canvas.delete(side_tutorial)
         countdown(540)
         open_validation()
 
     elif button_id_1 == 2:
         destroy_current_window()
+        canvas.delete(secondtutorial)
         canvas.delete(side_tutorial)
         countdown(540)
         news_reader()
 
     elif button_id_1 == 3:
         destroy_current_window()
+        canvas.delete(secondtutorial)
         canvas.delete(side_tutorial)
         countdown(540)
         boris_laptop()
 
     elif button_id_1 == 4:
         destroy_current_window()
+        canvas.delete(secondtutorial)
         canvas.delete(side_tutorial)
         countdown(540)
         news_reader()
-
-    # TODO: (Optional) Create a dictionary instead of single IF statements?
 
 
 def open_home_windows(button_id_1):
     if button_id_1 == 1:
         destroy_current_window()
         canvas.delete(side_tutorial)
+        canvas.delete(secondtutorial)
         open_validation()
 
     elif button_id_1 == 2:
         destroy_current_window()
         canvas.delete(side_tutorial)
+        canvas.delete(secondtutorial)
         news_reader()
 
     elif button_id_1 == 3:
         destroy_current_window()
         canvas.delete(side_tutorial)
+        canvas.delete(secondtutorial)
         boris_laptop()
 
     elif button_id_1 == 4:
         destroy_current_window()
         canvas.delete(side_tutorial)
+        canvas.delete(secondtutorial)
         news_reader()
 
 
+def win_game():
+    print("Game Won")
+
+
 def boris_laptop():
-    news = Canvas(canvas, width=975, height=585)
-    news.create_image(500, 295, image=boris_laptop_background)
-    news.place(x=85, y=47)
+    if totalKeys == 7:
+        granted = Canvas(canvas, width=975, height=585)
+        granted.create_image(500, 295, image=access_granted)
+        granted.place(x=85, y=47)
 
-    count_boris = Label(app.tk)
-    count_boris.configure(text="YOU MUST FIND ALL KEYS", background="black", foreground="white", font=("Courier", 14))
-    count_boris.place(x=10, y=3)
+        count_boris = Label(app.tk)
+        count_boris.configure(text="ALL KEYS HAVE BEEN FOUND", background="black", foreground="white",
+                              font=("Courier", 14))
+        count_boris.place(x=10, y=3)
 
-    # TODO: When opened, check in the game save file if all 7 keys have been found.
-    # TODO: Display in a label how many keys have been found.
-    # TODO: Once the seven keys have been found, display the "Cancel Brexit" button.
+        stop_btn = Button(app.tk, text="Macron", image=stop_brexit, highlightthickness=0, bd=0,
+                          command=win_game, height=40, width=140, background="#ffffff", cursor="hand1",
+                          activebackground="#ffffff").place(x=584, y=736)  # Creates a Macron button.
+
+    else:
+        access = Canvas(canvas, width=975, height=585)
+        access.create_image(500, 295, image=boris_laptop_background)
+        access.place(x=85, y=47)
+
+        count_boris = Label(app.tk)
+        count_boris.configure(text="YOU MUST FIND ALL KEYS", background="black", foreground="white",
+                              font=("Courier", 14))
+        count_boris.place(x=10, y=3)
+
+        count_keys = Label(app.tk)
+        count_keys.configure(text="KEYS FOUND: " + str(totalKeys), foreground="white", background="#363636",
+                             font=("Courier", 17))
+        count_keys.place(x=492, y=515)
 
 
 def proceed_tutorial():
     print("Proceed")
 
-    canvas.create_image(788, 29, image=second_tutorial, anchor=NW)
-
-    # TODO: When second part displayed, also position the "finish tutorial" button.
-    # TODO: When the "finish tutorial" button is clicked, start the timer and open the news reader
+    canvas.delete(side_tutorial)
 
     proceed_button = Button(text="Proceed", image=finish_tutorial_button, highlightthickness=0, bd=0,
-                            command=lambda: check_tutorial(4), height=46, width=146,
-                            activebackground="#00d639").place(x=948, y=490)
+                            command=finish_tutorial, height=46, width=292,
+                            activebackground="#00d639").place(x=797, y=490)
 
 
 def cancel_skip():
+    for widget2 in canvas.winfo_children():
+        print(widget2)
+
+        if ".!canvas.!canvas" in str(widget2):
+            widget2.destroy()
+
+    widgets = []
+
     for widget in app.tk.winfo_children():
-        if any(str(widget) in s for s in system_widgets):
-            pass
-        else:
-            widget.destroy()
+        widgets.append(str(widget))
+
+    if ".!button12" in widgets:  # Tutorial is active
+        widget.destroy()
 
 
 def check_tutorial(button_id):
@@ -464,8 +615,16 @@ def open_validation():
 
 
 def check_current_key():
+    global totalKeys
+
     if str(key_input.get()) in data:
-        validation.create_image(452, 255, image=correct_image)
+        if str(key_input.get()) in keys_found:
+            validation.create_image(452, 255, image=warning_button)
+        else:
+            validation.create_image(452, 255, image=correct_image)
+            totalKeys = totalKeys + 1
+            keys_found.append(str(key_input.get()))
+
     else:
         validation.create_image(452, 255, image=warning_button)
 
@@ -507,6 +666,13 @@ finish_tutorial_button = PhotoImage(file="resources/finish_tutorial.png")
 game_options = PhotoImage(file="resources/game_options.png")
 menu_dropdown = PhotoImage(file="resources/notification_button.png")
 news_help_page = PhotoImage(file="resources/help_background.png")
+access_granted = PhotoImage(file="resources/access_granted.png")
+stop_brexit = PhotoImage(file="resources/stop_brexit.png")
+copy_button = PhotoImage(file="resources/copy_button.png")
+key_warning = PhotoImage(file="resources/attention_key.png")
+exit_the_game = PhotoImage(file="resources/quit_to_menu.png")
+restart_the_game = PhotoImage(file="resources/restart_game.png")
+save_the_game = PhotoImage(file="resources/save_progress.png")
 
 # Article Files --------------------------------------------------------------------------------------------------------
 anchor_article = PhotoImage(file="resources/anchor.png")
@@ -564,45 +730,3 @@ exit_button = Button(text="Exit", image=exit_image, highlightthickness=0, bd=0, 
                      height=110, width=150, activebackground="#d61900").place(x=640, y=177)  # Creates a quit button.
 
 app.display()  # This initiates the wrapped Tkinter window.
-
-'''' --------------------------------- USELESS CODE --------------------------------------------------------------------
-
-with open("test.txt", "a") as myfile:
-    myfile.write("appended text") ----> Append text to file.
-    
--------------------------------------------------------------------------------
-
---------------> Create a canvas which utilizes the drag and drop, and do something when the user puts mouse above.
-
-def main():
-    f= open("guru99.txt","w+")
-    #f=open("guru99.txt","a+")
-    for i in range(10):
-         f.write("This is line %d\r\n" % (i+1))
-    f.close()
-    #Open the file back and read the contents
-    #f=open("guru99.txt", "r")
-    #if f.mode == 'r':
-    #   contents =f.read()
-    #    print (contents)
-    #or, readlines reads the individual line into a list
-    #fl =f.readlines()
-    #for x in fl:
-    #print(x)
-if __name__== "__main__":
-  main()
-  
---------------------------------------------------
-file = open(“testfile.txt”,”w”) 
- 
-file.write(“Why? Because we can.”) 
- 
-file.close() 
-
---------------------------------------------------
-f = open("demofile.txt", "r")
-print(f.read(5))
-
-self.Box.attributes("-alpha", .30) -------> Create transparent Canvas.
-    
-'''
